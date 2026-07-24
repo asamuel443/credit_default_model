@@ -26,6 +26,14 @@ def load_data():
     return X, y
 
 
+def class_balance(y):
+    """Print the class split (counts and percentages) for good vs. bad credit risk."""
+    counts = y.value_counts().sort_index()
+    labels = {0: "good", 1: "bad"}
+    for cls, count in counts.items():
+        print(f"{labels[cls]}: {count} ({count / len(y):.1%})")
+
+
 def build_model(X):
     """Scale numeric columns, one-hot encode categoricals, then logistic regression."""
     numeric_cols = X.select_dtypes(include="number").columns.tolist()
@@ -49,7 +57,8 @@ def build_model(X):
 def main():
     X, y = load_data()
     print(f"Loaded {X.shape[0]} rows, {X.shape[1]} features.")
-    print(f"Bad-credit rate: {y.mean():.1%}\n")
+    class_balance(y)
+    print()
 
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
